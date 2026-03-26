@@ -1,0 +1,18 @@
+name: apidash_storage
+description: A starting point for Dart libraries or applications.
+version: 1.0.0
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.11.3
+
+resolution: workspace
+
+# Add regular dependencies here.
+dependencies:
+  better_networking: any
+  path: ^1.9.1
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
