@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+
+const bool kIsWeb = bool.fromEnvironment('dart.library.js_interop');
 
 /// Platform detection utilities for the better_networking package.
 class PlatformUtils {

@@ -1,5 +1,4 @@
 import 'package:better_networking/better_networking.dart';
-import 'package:flutter/foundation.dart';
 import 'package:test/test.dart';
 import 'package:http/io_client.dart';
 
