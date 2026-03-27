@@ -1,0 +1,32 @@
+import 'dart:io';
+
+import 'package:mcp_dart/mcp_dart.dart';
+
+import 'tools/list_collections_tool.dart';
+
+/// Starts the MCP server over stdio.
+Future<void> runServer() async {
+  final workspacePath = Platform.environment['APIDASH_WORKSPACE_PATH'];
+
+  if (workspacePath == null || workspacePath.trim().isEmpty) {
+    stderr.writeln(
+      'APIDASH_WORKSPACE_PATH is not set. '
+      'Set it to your HIS workspace path before starting apidash_mcp.',
+    );
+    exitCode = 64;
+    return;
+  }
+
+  final server = McpServer(
+    const Implementation(name: 'apidash_mcp', version: '0.1.0'),
+    options: const McpServerOptions(
+      capabilities: ServerCapabilities(
+        tools: ServerCapabilitiesTools(),
+      ),
+    ),
+  );
+
+  registerListCollectionsTool(server, workspacePath: workspacePath);
+
+  await server.connect(StdioServerTransport());
+}
