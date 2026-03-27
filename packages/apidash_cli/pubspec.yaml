@@ -1,0 +1,22 @@
+name: apidash_cli
+description: A sample command-line application.
+version: 1.0.0
+
+executables:
+  apidash: apidash_cli
+
+environment:
+  sdk: ^3.11.3
+
+resolution: workspace
+
+dependencies:
+  apidash_storage: any
+  args: ^2.6.0
+  better_networking: any
+  mason_logger: ^0.3.3
+  uuid: ^4.0.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
