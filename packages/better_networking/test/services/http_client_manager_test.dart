@@ -11,7 +11,7 @@ void main() {
     });
 
     test('createHttpClientWithNoSSL: returns an IOClient when not on web', () {
-      if (!kIsWeb) {
+      if (!isweb) {
         final client = manager.createClient('req2', noSSL: true);
         expect(client, isA<IOClient>());
       }
