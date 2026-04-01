@@ -1,7 +1,7 @@
 import 'dart:io';
-
+import 'package:apidash_mcp/src/tools/list_folder_from_collection_tool.dart';
+import 'package:apidash_mcp/src/tools/list_requests_tool.dart';
 import 'package:mcp_dart/mcp_dart.dart';
-
 import 'tools/list_collections_tool.dart';
 
 /// Starts the MCP server over stdio.
@@ -26,7 +26,14 @@ Future<void> runServer() async {
     ),
   );
 
-  registerListCollectionsTool(server, workspacePath: workspacePath);
+  toolRegister(server, workspacePath);
 
   await server.connect(StdioServerTransport());
+}
+
+
+void toolRegister(McpServer server, String workspacePath) {
+  registerListCollectionsTool(server, workspacePath: workspacePath);
+  registerListFoldersFromCollectionTool(server, workspacePath: workspacePath);
+  registerListRequestsTool(server, workspacePath: workspacePath);
 }

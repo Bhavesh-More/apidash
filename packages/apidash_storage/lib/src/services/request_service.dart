@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:apidash_storage/src/services/folder_service.dart';
 import 'package:better_networking/better_networking.dart';
 import 'package:path/path.dart' as path;
 import 'collection_service.dart';
@@ -9,20 +10,25 @@ class RequestService {
     required this.workspacePath,
     CollectionService? collectionService,
     FileService? fileService,
+    FolderServices? folderServices,
   })  : _fileService = fileService ?? const FileService(),
         _collectionService =
-            collectionService ?? CollectionService(workspacePath: workspacePath);
+            collectionService ?? CollectionService(workspacePath: workspacePath),
+        _folderServices = folderServices ?? FolderServices(workspacePath: workspacePath);
 
   final String workspacePath;
   final FileService _fileService;
   final CollectionService _collectionService;
+  final FolderServices _folderServices;
 
   Future<void> saveRequest({
     required String collectionId,
     required String requestId,
     required HttpRequestModel request,
+    String? folderId,
     String? requestName,
   }) async {
+
     final collectionDir = Directory(
       path.join(workspacePath, 'collections', collectionId),
     );
@@ -32,18 +38,42 @@ class RequestService {
     }
 
     final fileName = '$requestId.json';
-    final requestFile = File(path.join(collectionDir.path, fileName));
 
-    await _fileService.writeJsonFile(requestFile, request.toJson());
+     File requestFile;
 
-    await _collectionService.upsertRequestIndexEntry(
-      collectionId: collectionId,
-      requestId: requestId,
-      method: request.method.name.toUpperCase(),
-      url: request.url,
-      name: requestName ?? '${request.method.name.toUpperCase()} ${request.url}',
-      file: fileName,
-    );
+    if(folderId != null) {
+      final folderDir = Directory(
+        path.join(workspacePath, 'collections', collectionId, folderId),
+      );
+      if (!await folderDir.exists()) {
+        throw Exception('Folder not found: $folderId in collection $collectionId');
+      }
+      requestFile = File(path.join(folderDir.path, fileName));
+      await _fileService.writeJsonFile(requestFile, request.toJson());
+      await _folderServices.upsertRequestIndexEntry(
+        collectionId: collectionId,
+        folderId: folderId,
+        requestId: requestId,
+        method: request.method.name.toUpperCase(),
+        url: request.url,
+        name: requestName ?? '$request.url',
+        file: fileName,
+      );
+    }
+    else {
+
+      requestFile = File(path.join(collectionDir.path, fileName));
+      await _fileService.writeJsonFile(requestFile, request.toJson());
+      await _collectionService.upsertRequestIndexEntry(
+        collectionId: collectionId,
+        requestId: requestId,
+        method: request.method.name.toUpperCase(),
+        url: request.url,
+        name: requestName ?? '$request.url',
+        file: fileName,
+      );
+    }
+    
   }
 
   Future<HttpRequestModel> readRequest({

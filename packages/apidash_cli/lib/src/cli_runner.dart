@@ -2,6 +2,7 @@ import 'package:args/command_runner.dart';
 
 import 'commands/exec_command.dart';
 import 'commands/init_command.dart';
+import 'commands/list_command.dart';
 
 /// CliRunner wires commands and global flags.
 class CliRunner extends CommandRunner<void> {
@@ -25,6 +26,7 @@ class CliRunner extends CommandRunner<void> {
       ..addFlag('quiet', negatable: false, help: 'Suppress non-error output.');
 
     addCommand(InitCommand());
+    addCommand(ListCommand());
     addCommand(ExecCommand());
   }
 
